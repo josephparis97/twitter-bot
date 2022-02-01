@@ -1,3 +1,4 @@
+const schedule = require('node-schedule');
 require('dotenv').config();
 const {TwitterApi} = require('twitter-api-v2');
 const OpenAI = require('openai-api');
@@ -16,7 +17,7 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
-(async () => {
+let tweet=async () => {
     const response = await openai.createCompletion("text-davinci-001", {
         prompt: "Inspirational quote and author :",
         max_tokens: 250,
@@ -34,15 +35,16 @@ const openai = new OpenAIApi(configuration);
     })
     
     
-   
-})();
+};
 
 
-/*
-client.v1.tweet(textToTweet).then((val) => {
-    console.log(val)
-    console.log("success")
-}).catch((err) => {
-    console.log(err)
-})
-*/
+
+const rule = new schedule.RecurrenceRule();
+rule.hour = 8
+rule.minute = 0;
+
+const job = schedule.scheduleJob(rule, function(){
+    tweet();
+});
+
+
